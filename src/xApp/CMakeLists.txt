@@ -105,6 +105,15 @@ if(E2AP_ENCODING STREQUAL "ASN")
             $<TARGET_OBJECTS:e2_conv_obj>
             )
 
+          target_link_libraries(e42_xapp_shared
+            PUBLIC
+              asn1_nr_rrc
+              sctp
+              pthread
+              dl
+            )
+          target_link_options(e42_xapp_shared PRIVATE "-Wl,--allow-multiple-definition")
+
 	 target_compile_options(e42_xapp_shared PRIVATE "-DASN_DISABLE_OER_SUPPORT" -fPIC)
 
 if(E2AP_VERSION STREQUAL "E2AP_V1")
