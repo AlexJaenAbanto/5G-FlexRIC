@@ -7,7 +7,9 @@ XAPPS_DIR="${HOME}/xapps"
 
 echo "[+] Preparando directorios..."
 mkdir -p "$CONF_DIR" "$XAPPS_DIR"
-cp "$DIR/configs/flexric.conf" "$CONF_DIR/flexric.conf"
+if [ -f "$DIR/configs/flexric.conf" ]; then
+  cp "$DIR/configs/flexric.conf" "$CONF_DIR/flexric.conf"
+fi
 
 echo "[+] Compilando imagen Docker de FlexRIC..."
 cd "$DIR"
@@ -22,9 +24,10 @@ docker run -d \
   --restart unless-stopped \
   --net=host \
   --privileged \
-  -v "$CONF_DIR/flexric.conf":/usr/local/etc/flexric/flexric.conf \
+  -t \
+  -v "$CONF_DIR/flexric.conf":/usr/local/etc/flexric/flexric.conf:ro \
   -v "$XAPPS_DIR":/xapps \
   flexric:latest \
-  nearRT-RIC -c /usr/local/etc/flexric/flexric.conf
+  stdbuf -oL -eL nearRT-RIC -c /usr/local/etc/flexric/flexric.conf
 
 echo "[OK] FlexRIC desplegado y escuchando en E2 (36421) y E42 (36422)."
